@@ -194,6 +194,7 @@ function indicia_map_taxon_formatter_settings_form($settings, $type, $args) {
 function theme_indicia_map_taxon_formatter_output($params) {
   $item = $params['item'];
   $preset = $params['preset'];
+  $node = $params['entity'];
   // Return nothing if no TVK.
   $tvk = trim($item['value']);
   if (empty($tvk)) {
