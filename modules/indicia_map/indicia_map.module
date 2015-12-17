@@ -31,7 +31,7 @@ function indicia_map_taxon_formatter_types() {
 /**
  * This defines the drupal form used for the settings of this formatter type.
  * 
- * This attempts to reuse the iform_distribution_map_1 but this is might have 
+ * This attempts to reuse the iform_distribution_map_1 but this might have 
  * been a bad idea. Potentially more confusing than labour saving. I've ended up
  * recreating some of what is done in report_helper instead of recreating what
  * is done in distribution_map_1
@@ -204,6 +204,7 @@ function theme_indicia_map_taxon_formatter_output($params) {
   $args = $preset['settings'];
   $args['taxon_identifier'] = $tvk;
   $args['external_key'] = TRUE;
+  $args['show_all_species'] = FALSE;
   $connection = iform_get_connection_details($node);
   $args['website_id'] = $connection['website_id'];
   $args['password'] = $connection['password'];
