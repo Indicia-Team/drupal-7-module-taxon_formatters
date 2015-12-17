@@ -289,7 +289,7 @@ function taxon_formatters_field_formatter_view($entity_type, $entity, $field, $i
   $func = $preset['type'] . '_taxon_formatter_output';
   foreach ($items as $delta => $item) {
     // Generate the output.
-    $markup = theme($func, array('item' => $item, 'preset' => $preset));
+    $markup = theme($func, array('item' => $item, 'preset' => $preset, 'entity' => $entity));
     $element[$delta] = array('#markup' => $markup);
   }
   return $element;
