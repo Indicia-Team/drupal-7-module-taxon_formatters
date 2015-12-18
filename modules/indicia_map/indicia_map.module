@@ -46,7 +46,8 @@ function indicia_map_taxon_formatter_settings_form($settings, $type, $args) {
     ), $settings);
 
     iform_load_helpers(array('data_entry_helper'));
-    $connection = iform_get_connection_details($node);
+    $connection['website_id']=variable_get('indicia_website_id', '');
+    $connection['password']=variable_get('indicia_password', '');
 
     // Get the parameters for a distribution_map_1
     $map_params = iform_distribution_map_1::get_parameters();
@@ -124,7 +125,7 @@ function indicia_map_taxon_formatter_settings_form($settings, $type, $args) {
           '#type' => $type_mapping[$a['type']],
           '#title' => check_plain($title),
           '#description' => check_plain($description),
-          '#required' => $a['required'],
+          '#required' => (array_key_exists('required', $a)) ? $a['required'] : FALSE,
           '#wysiwyg' => FALSE,
         );
 
