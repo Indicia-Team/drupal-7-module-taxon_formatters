@@ -124,7 +124,7 @@ function indicia_map_taxon_formatter_settings_form($settings, $type, $args) {
           '#type' => $type_mapping[$a['type']],
           '#title' => check_plain($title),
           '#description' => check_plain($description),
-          '#required' => $a['required'],
+          '#required' => (array_key_exists('required', $a)) ? $a['required'] : FALSE,
           '#wysiwyg' => FALSE,
         );
 
