@@ -167,7 +167,14 @@ function theme_nbn_map_taxon_formatter_output($params) {
 
         // Get the file in to the cache.
         $query = nbn_map_build_query($ptvk, $preset);
-        $remote_image = file_get_contents($query);
+        $context = stream_context_create(array(
+            'ssl' => array(
+                'cafile' => drupal_get_path('module', 'taxon_formatters') . '/cacert.pem',
+                'verify_peer' => true,
+                'verifiy_peer_name' => true,
+            ),
+        ));
+        $remote_image = file_get_contents($query, false, $context);
         if($remote_image === FALSE) {
           throw new Exception('Failed trying to get image from NBN Servers');
         }
