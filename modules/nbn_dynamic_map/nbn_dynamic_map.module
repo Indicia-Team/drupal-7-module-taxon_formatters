@@ -90,7 +90,7 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
     $ds = str_replace("\r\n", "\n", $preset['settings']['datasets']);
     $ds = str_replace("\r", "\n", $ds);
     $ds = explode("\n", trim($ds));
-    $datasets = '?datasets=' . implode(',', $ds);
+    $datasets = 'data_resource_uid:' . implode('OR data_resource_uid:', $ds);
   }
   else {
     $datasets = '';
@@ -99,11 +99,25 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
   // as OpenLayers capitalises it which the gateway then ignores.
   map_helper::$javascript .= '
 mapSettingsHooks.push(function(opts) {
-   var nbn10 = new OpenLayers.Layer.WMS("NBN Gateway 10km data", "https://gis.nbn.org.uk/SingleSpecies/' . $tvk . $datasets . '", 
-      {LAYERS: "Grid-10km", CRS:"EPSG:3857", VERSION:"1.3.0", FORMAT:"png", TRANSPARENT: true}, {isBaseLayer: false, opacity: 0.5, minResolution: 360}),
-      nbn1 = new OpenLayers.Layer.WMS("NBN Gateway 1km data", "https://gis.nbn.org.uk/SingleSpecies/' . $tvk . $datasets . '", 
-      {LAYERS: "Grid-1km", CRS:"EPSG:3857", VERSION:"1.3.0", FORMAT:"png", TRANSPARENT: true}, {isBaseLayer: false, opacity: 0.5, maxResolution: 361});
-  opts.layers.splice(0, 0, nbn10, nbn1);
+  var nbn = new OpenLayers.Layer.WMS(
+    "NBN Atlas data", 
+    "https://records-ws.nbnatlas.org/ogc/wms/reflect", 
+    {
+      q : "lsid:' . $tvk . '",
+      fq : "' . $datasets . '",
+      LAYERS: "ALA:occurrences", 
+      CRS:"EPSG:3857", 
+      FORMAT:"image/png", 
+      TRANSPARENT: true,
+      ENV: "colourmode:osgrid;gridlabels:true;gridres:singlegrid;opacity:1;color:df4a21;"
+    },
+    {
+      isBaseLayer: false,
+      opacity: 0.5,
+    }
+  );  
+
+  opts.layers.splice(0, 0, nbn);
 });
 ';
   $args = array(
@@ -121,9 +135,9 @@ function theme_nbn_dynamic_map_output($args) {
   $result = '<div style="width: ' . $args['preset']['settings']['width'] . 'px; margin: 0 auto;">';
   $result .= $args['map'];
   $result .= '<table width="100%">' .
-      '<tbody><tr><td align="left"><a href="http://data.nbn.org.uk/help/popups/generalTerms.jsp">' .
-      t('Gateway terms and conditions') . '</a></td><td align="right"><a href="http://data.nbn.org.uk">' .
-      '<img src="http://data.nbn.org.uk/images/NBNPower.gif" alt="NBN Logo" width="100" height="14"></a></td></tr></tbody></table></div>';
+      '<tbody><tr><td align="left"><a href="https://nbnatlas.org/help/nbn-atlas-terms-use/">' .
+      t('NBN Atlas Terms of Use') . '</a></td><td align="right"><a href="http://data.nbn.org.uk">' .
+      '<img src="https://easymap.nbnatlas.org/NBNPower.gif" alt="NBN Logo" width="100" height="14"></a></td></tr></tbody></table></div>';
   return $result;
 }
 
