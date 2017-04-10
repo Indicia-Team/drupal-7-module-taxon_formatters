@@ -90,21 +90,21 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
     $ds = str_replace("\r\n", "\n", $preset['settings']['datasets']);
     $ds = str_replace("\r", "\n", $ds);
     $ds = explode("\n", trim($ds));
-    $datasets = 'data_resource_uid:' . implode('OR data_resource_uid:', $ds);
+    $datasets = 'data_resource_uid:' . implode(' OR data_resource_uid:', $ds);
   }
   else {
     $datasets = '';
   }
-  // Datasets get embedded straight in the URL rather than passed as a property,
-  // as OpenLayers capitalises it which the gateway then ignores.
+  // q and fq get embedded straight in the URL rather than passed as a 
+  // property, as OpenLayers capitalises to Q and FQ. The Atlas ignores FQ.
   map_helper::$javascript .= '
 mapSettingsHooks.push(function(opts) {
   var nbn = new OpenLayers.Layer.WMS(
     "NBN Atlas data", 
-    "https://records-ws.nbnatlas.org/ogc/wms/reflect", 
+    "https://records-ws.nbnatlas.org/ogc/wms/reflect" + 
+      "?q=lsid:' . $tvk . '" +
+      "&fq=' . $datasets . '", 
     {
-      q : "lsid:' . $tvk . '",
-      fq : "' . $datasets . '",
       LAYERS: "ALA:occurrences", 
       CRS:"EPSG:3857", 
       FORMAT:"image/png", 
@@ -113,7 +113,7 @@ mapSettingsHooks.push(function(opts) {
     },
     {
       isBaseLayer: false,
-      opacity: 0.5,
+      opacity: 0.8,
     }
   );  
 
