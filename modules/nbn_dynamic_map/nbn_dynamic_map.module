@@ -136,7 +136,7 @@ function theme_nbn_dynamic_map_output($args) {
   $result .= $args['map'];
   $result .= '<table width="100%">' .
       '<tbody><tr><td align="left"><a href="https://nbnatlas.org/help/nbn-atlas-terms-use/">' .
-      t('NBN Atlas Terms of Use') . '</a></td><td align="right"><a href="http://data.nbn.org.uk">' .
+      t('NBN Atlas Terms of Use') . '</a></td><td align="right"><a href="https://nbnatlas.org">' .
       '<img src="https://easymap.nbnatlas.org/NBNPower.gif" alt="NBN Logo" width="100" height="14"></a></td></tr></tbody></table></div>';
   return $result;
 }
