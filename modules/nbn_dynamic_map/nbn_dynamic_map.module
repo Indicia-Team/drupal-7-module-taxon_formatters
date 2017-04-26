@@ -59,6 +59,18 @@ function nbn_dynamic_map_taxon_formatter_settings_form($settings, $type, $args) 
       '#default_value' => $settings['datasets'],
       '#wysiwyg' => FALSE,
     );
+    $form['colour'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Colour (rrggbb)'),
+      '#description' => t('Colour of the grid squares in hexadecimal RGB format.'),
+      '#default_value' => empty($settings['colour']) ? 'df4a21' : $settings['colour'],
+    );
+    $form['opacity'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Opacity (%)'),
+      '#description' => t('Opacity of the grid squares from 0 (transparent) to 100 (opaque).'),
+      '#default_value' => empty($settings['opacity']) ? '80' : $settings['opacity'],
+    );
   }
   return $form;
 }
@@ -74,6 +86,8 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
   if (empty($tvk)) {
     return '';
   }
+  
+  // Create an Indicia map panel which uses OpenLayers.
   iform_load_helpers(array('map_helper'));
   $map = map_helper::map_panel(array(
     'presetLayers' => array('google_satellite', 'google_physical', 'osm'),
@@ -86,6 +100,8 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
     'standardControls' => array('layerSwitcher', 'panZoomBar'),
     'rememberPos' => FALSE,
   ), array('theme' => map_helper::$js_path . 'theme/default/style.css'));
+  
+  // Prepare settings for the NBN Atlas WMS request.
   if (!empty($preset['settings']['datasets'])) {
     $ds = str_replace("\r\n", "\n", $preset['settings']['datasets']);
     $ds = str_replace("\r", "\n", $ds);
@@ -95,6 +111,9 @@ function theme_nbn_dynamic_map_taxon_formatter_output($params) {
   else {
     $datasets = '';
   }
+  $colour = empty($preset['settings']['colour']) ? 'df4a21' : $preset['settings']['colour'];
+  $opacity = empty($preset['settings']['opacity']) ? '0.8' : $preset['settings']['opacity'] / 100;
+    
   // q and fq get embedded straight in the URL rather than passed as a 
   // property, as OpenLayers capitalises to Q and FQ. The Atlas ignores FQ.
   map_helper::$javascript .= '
@@ -109,11 +128,11 @@ mapSettingsHooks.push(function(opts) {
       CRS:"EPSG:3857", 
       FORMAT:"image/png", 
       TRANSPARENT: true,
-      ENV: "colourmode:osgrid;gridlabels:true;gridres:singlegrid;opacity:1;color:df4a21;"
+      ENV: "colourmode:osgrid;gridlabels:true;gridres:singlegrid;opacity:1;color:' . $colour . ';"
     },
     {
       isBaseLayer: false,
-      opacity: 0.8,
+      opacity: ' . $opacity .',
     }
   );  
 
